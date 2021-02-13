@@ -4,15 +4,17 @@ import './index.css'
 import App from './App'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthStateProvider } from './stores/GoogleAuth'
+import { YoutubeStateProvider } from './stores/Youtube'
 
-console.log(process.env.GOOGLE_API_CLIENT_ID)
 ReactDOM.render(
-  <BrowserRouter>
     <AuthStateProvider>
-      <App />
-    </AuthStateProvider>
-  </BrowserRouter>,
-  document.getElementById('root')
+      <YoutubeStateProvider>
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
+      </YoutubeStateProvider>
+    </AuthStateProvider>,
+    document.getElementById('root')
 )
 
 // If you want to start measuring performance in your app, pass a function

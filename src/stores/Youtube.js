@@ -1,9 +1,9 @@
 import React, { createContext, useReducer } from 'react'
-import YoutubeApi from '../YoutubeApi.mock'
 import PropTypes from 'prop-types'
 
 const initialState = {
   isFetching: false,
+  canFetchLives: false,
   subscriptions: [],
   potentialSubscriptions: [], // この中からライブ情報を取得する候補を選択させる.
   upcomminglives: [],
@@ -12,7 +12,7 @@ const initialState = {
      * @type{YoutubeApi}
      */
   api: null,
-  isInitialized: false
+  lastFetched: null
 }
 
 const Actions = {
@@ -25,7 +25,8 @@ const Actions = {
   REQUEST_POTENTIAL_SUBSCRICTIONS: 'REQUEST_POTENTIAL_SUBSCRICTIONS',
   REQUEST_UPCOMING_LIVES: 'REQUEST_UPCOMING_LIVES',
   REQUEST_ACTIVE_LIVES: 'REQUEST_ACTIVE_LIVES',
-  SET_IS_INITIALIZED: 'SET_US_INITIALIZED'
+  FETCH_START: 'FETCH_START',
+  FETCH_END: 'FETCH_END'
 }
 
 const store = createContext({
@@ -36,29 +37,16 @@ const store = createContext({
 const { Provider } = store
 
 const YoutubeStateProvider = ({ children }) => {
+  console.log('provider init')
   const [state, dispatch] = useReducer((state, action) => {
+    console.log(action, state)
     switch (action.type) {
       case Actions.INIT:
-        const api = new YoutubeApi(action.payload)
-        // FIXME dispatchはsettimeoutとかpromise挟まないと Cannot access before initialization になる.
-        // とりあえずsetTimeoutでごまかすが、reducerの中でdispatchを呼び出すのはNGなのか？
-        setTimeout(() => {
-          const localSubscriptions = JSON.parse(localStorage.getItem('subscriptions'))
-          if (localSubscriptions) {
-            dispatch({ type: Actions.SET_SUBSCRIPTIONS, payload: localSubscriptions })
-          } else {
-            dispatch({ type: Actions.REQUEST_POTENTIAL_SUBSCRICTIONS })
-          }
-          dispatch({ type: Actions.SET_IS_INITIALIZED, payload: true })
-        })
-        return { ...state, api }
-
-      case Actions.SET_IS_INITIALIZED:
-        return { ...state, isInitialized: action.payload }
+        return { ...state, api: action.payload }
 
       case Actions.SET_SUBSCRIPTIONS:
         localStorage.setItem('subscriptions', JSON.stringify(action.payload))
-        return { ...state, subscriptions: action.payload, potentialSubscriptions: [] }
+        return { ...state, subscriptions: action.payload, potentialSubscriptions: [], isFetching: false, canFetchLives: true }
 
       case Actions.SET_UPCOMING_LIVES:
         return { ...state, upcomminglives: action.payload, isFetching: false }
@@ -72,17 +60,28 @@ const YoutubeStateProvider = ({ children }) => {
         })
         return { ...state, isFetching: true }
 
+      case Actions.FETCH_START:
+        return { ...state, isFetching: true }
+
       case Actions.SET_POTENTIAL_SUBSCRIPTIONS:
         return { ...state, potentialSubscriptions: action.payload, isFetching: false }
 
       case Actions.REQUEST_UPCOMING_LIVES:
+        if (state.lastFetched) {
+          const throttleDate = new Date()
+          throttleDate.setMinutes(throttleDate.getMinutes() - 3)
+          if (state.lastFetched >= throttleDate) {
+            return state
+          }
+        }
         Promise.all(state.subscriptions.map(async id =>
           state.api.fetchUpcomingLivesByChannelId(id)
         )).then(result => {
+          console.log(result)
           const all = result.reduce((acc, cur) => [...acc, ...cur], []).map(obj => obj.snippet)
           dispatch({ type: Actions.SET_UPCOMING_LIVES, payload: all })
         })
-        return { ...state, isFetching: true }
+        return { ...state, isFetching: true, lastFetched: new Date() }
 
       default:
         throw new Error(`Unexpeceted action: ${action.type}`)

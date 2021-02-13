@@ -47,6 +47,7 @@ const SubscroptionSelectDialog = () => {
   const handleOk = () => {
     dispatch({ type: Actions.SET_SUBSCRIPTIONS, payload: checkedChannelIds })
   }
+  console.log(state.potentialSubscriptions)
 
   return (
     <Dialog
@@ -65,7 +66,7 @@ const SubscroptionSelectDialog = () => {
                     <Avatar src={subs.thumbnails.medium.url}>
                     </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={subs.channelTitle} secondary={subs.description} />
+                <ListItemText primary={subs.title} />
                 <Checkbox
                     name={subs.resourceId.channelId}
                     className={stlye.checkbox}

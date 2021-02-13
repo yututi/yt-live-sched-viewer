@@ -5,15 +5,8 @@ import { useContext, useState } from 'react'
 import Appbar from './components/Appbar'
 import LoginDialog from './components/LoginDialog'
 import LinearProgress from '@material-ui/core/LinearProgress'
-import { YoutubeStateProvider } from './stores/Youtube'
-import { store } from './stores/GoogleAuth'
+import { store, Actions } from './stores/GoogleAuth'
 import Drawer from './components/Drawer'
-
-// const auth = Auth.forGoogleApi({
-//   clientId: "88457129753-tqqvr0ds1j2d20dojtirv21kn78bfi5n.apps.googleusercontent.com",
-//   redirectUrl: "http://localhost:8080/login",
-//   scope: ["https://www.googleapis.com/auth/youtube.readonly"]
-// })
 
 function App () {
   const history = useHistory()
@@ -21,22 +14,27 @@ function App () {
   const [isDrawerOpen, setIsOpen] = useState(false)
 
   const {
-    state
+    state,
+    dispatch
   } = useContext(store)
 
   if (state.isInitialized && state.isLoggedIn) {
     if (history.location.pathname === '/login') history.push('/')
   }
 
+  const onLogoutClick = () => {
+    state.api.revokeToken().then(() => {
+      dispatch({ type: Actions.LOGOUT })
+    })
+  }
+
   return (
     <div className="App">
-      <Appbar onNavClick={() => setIsOpen(true)}></Appbar>
+      <Appbar onNavClick={() => setIsOpen(true)} onLogoutClick={onLogoutClick}></Appbar>
       {!state.isInitialized ? <LinearProgress color="secondary" /> : ''}
       {state.isLoggedIn
         ? (
-        <YoutubeStateProvider>
           <RouterView auth={state.api}></RouterView>
-        </YoutubeStateProvider>
           )
         : ''}
       <LoginDialog requireLogin={!state.isLoggedIn && state.isInitialized} auth={state.api}></LoginDialog>

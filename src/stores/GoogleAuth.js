@@ -10,7 +10,8 @@ const initialState = {
 
 const Actions = {
   INIT: 'INIT',
-  SET_IS_LOGGED_IN: 'SET_IS_LOGGED_IN'
+  SET_IS_LOGGED_IN: 'SET_IS_LOGGED_IN',
+  LOGOUT: 'LOGOUT'
 }
 
 const store = createContext({
@@ -22,6 +23,7 @@ const { Provider } = store
 
 const AuthStateProvider = ({ children }) => {
   const [state, dispatch] = useReducer((state, action) => {
+    console.log('auth', action)
     switch (action.type) {
       case Actions.INIT:
         const auth = Auth.forGoogleApi({
@@ -43,6 +45,9 @@ const AuthStateProvider = ({ children }) => {
 
       case Actions.SET_IS_LOGGED_IN:
         return { ...state, isLoggedIn: action.payload, isInitialized: true }
+
+      case Actions.LOGOUT:
+        return { ...state, isLoggedIn: false, isInitialized: true }
 
       default:
         throw new Error(`Unexpeceted action: ${action.type}`)

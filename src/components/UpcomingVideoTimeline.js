@@ -26,6 +26,10 @@ const useStyles = makeStyles((theme) => ({
   },
   progress: {
     marginTop: '20px'
+  },
+  oppsite: {
+    minWidth: '200px',
+    flex: '0'
   }
 }))
 
@@ -35,27 +39,50 @@ export default function UpcomingVideoTimeline () {
 
   useEffect(() => {
     if (state.upcomminglives.length === 0) {
-      dispatch({ type: Actions.REQUEST_UPCOMING_LIVES })
+      // FIXME: ロジックをreducerへ移したいが、dispatchを呼び出すとreducerの処理が2回呼ばれる挙動になる.
+      // 原因がわからないのでここで呼び出す。ここのdispatchも2回呼び出されるがfetchは1回なので...
+      if (state.lastFetched) {
+        const throttleDate = new Date()
+        throttleDate.setMinutes(throttleDate.getMinutes() - 3)
+        if (state.lastFetched >= throttleDate) {
+          return state
+        }
+      }
+      dispatch({ type: Actions.FETCH_START })
+      Promise.all(state.subscriptions.map(async id =>
+        state.api.fetchUpcomingLivesByChannelId(id)
+      )).then(async result => {
+        const all = result.reduce((acc, cur) => [...acc, ...cur.items], [])
+
+        const videoIds = all.reduce((acc, cur) => {
+          acc.push(cur.id.videoId)
+          return acc
+        }, [])
+
+        const detailResult = await state.api.fetchLiveDetailsByVideoIds(videoIds)
+
+        dispatch({ type: Actions.SET_UPCOMING_LIVES, payload: detailResult.items })
+      })
     }
   }, [])
-
-  // group by publish datetime.
+  // group by scheduled start datetime.
   const group = state.upcomminglives.reduce((acc, cur) => {
-    const group = acc[cur.publishedAt]
+    const key = cur.liveStreamingDetails.scheduledStartTime
+    const group = acc[key]
     if (group) {
       group.push(cur)
     } else {
-      acc[cur.publishedAt] = [cur]
+      acc[key] = [cur]
     }
     return acc
   }, {})
 
   const livesGroupedByPublishAt = Object.entries(group).map(([key, value]) => {
     return {
-      publishedAt: key,
+      scheduledStartTime: new Date(key),
       lives: value
     }
-  }).sort((a, b) => a.publishedAt < b.publishedAt)
+  }).sort((a, b) => a.scheduledStartTime - b.scheduledStartTime)
 
   return (
         <>
@@ -63,12 +90,12 @@ export default function UpcomingVideoTimeline () {
             <CircularProgress className={classes.progress}></CircularProgress>
         </Fade>
         <Timeline align="left">
-            {livesGroupedByPublishAt.map(({ publishedAt, lives }) => {
+            {livesGroupedByPublishAt.map(({ scheduledStartTime, lives }) => {
               return (
-                <TimelineItem key={publishedAt}>
-                    <TimelineOppositeContent>
+                <TimelineItem key={scheduledStartTime}>
+                    <TimelineOppositeContent className={classes.oppsite}>
                         <Typography variant="body2" color="textSecondary">
-                        {publishedAt}
+                        {scheduledStartTime.toLocaleString()}
                         </Typography>
                     </TimelineOppositeContent>
                     <TimelineSeparator>

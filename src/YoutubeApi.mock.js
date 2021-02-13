@@ -23,6 +23,34 @@ export default class YoutubeApi {
             }
           }
         }
+      },
+      {
+        snippet: {
+          resourceId: {
+            channelId: 'hoge'
+          },
+          channelTitle: 'sample channel',
+          description: 'this is sample channel',
+          thumbnails: {
+            medium: {
+              url: 'https://yt3.ggpht.com/ytc/AAUvwniAjGmotDDxZK7psIMoRbqhY7Ici621OQrO7fB9Wg=s48-c-k-c0x00ffffff-no-rj'
+            }
+          }
+        }
+      },
+      {
+        snippet: {
+          resourceId: {
+            channelId: 'hoge2'
+          },
+          channelTitle: 'sample channel',
+          description: 'this is sample channel',
+          thumbnails: {
+            medium: {
+              url: 'https://yt3.ggpht.com/ytc/AAUvwniAjGmotDDxZK7psIMoRbqhY7Ici621OQrO7fB9Wg=s48-c-k-c0x00ffffff-no-rj'
+            }
+          }
+        }
       }
     ]
   }
