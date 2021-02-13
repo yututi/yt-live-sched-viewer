@@ -1,59 +1,58 @@
 
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemText from '@material-ui/core/ListItemText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogActions from '@material-ui/core/DialogActions';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import Avatar from '@material-ui/core/Avatar';
-import Checkbox from '@material-ui/core/Checkbox';
-import Button from '@material-ui/core/Button';
-import {store, Actions} from "../stores/Youtube"
-import {useContext, useState} from "react"
-import { makeStyles } from '@material-ui/core/styles';
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemAvatar from '@material-ui/core/ListItemAvatar'
+import ListItemText from '@material-ui/core/ListItemText'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import DialogActions from '@material-ui/core/DialogActions'
+import Dialog from '@material-ui/core/Dialog'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import Avatar from '@material-ui/core/Avatar'
+import Checkbox from '@material-ui/core/Checkbox'
+import Button from '@material-ui/core/Button'
+import { store, Actions } from '../stores/Youtube'
+import { useContext } from 'react'
+import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles((theme) => ({
-    checkbox: {
-        marginLeft: theme.spacing(2)
-    },
-    body: {
-        flex: 1
-    }
-}));
+  checkbox: {
+    marginLeft: theme.spacing(2)
+  },
+  body: {
+    flex: 1
+  }
+}))
 
 const SubscroptionSelectDialog = () => {
+  const stlye = useStyles()
 
-    const stlye = useStyles()
+  const { state, dispatch } = useContext(store)
 
-    const { state, dispatch } = useContext(store)
+  const isOpen = state.potentialSubscriptions.length > 0
 
-    const isOpen = state.potentialSubscriptions.length > 0
-
-    const checkedChannelIds = []
-    const handleChange = e => {
-        const {
-            name,
-            checked
-        } = e.target
-        if(checked) {
-            checkedChannelIds.push(name)
-        } else {
-            checkedChannelIds.splice(checkedChannelIds.indexOf(name), 1)
-        }
+  const checkedChannelIds = []
+  const handleChange = e => {
+    const {
+      name,
+      checked
+    } = e.target
+    if (checked) {
+      checkedChannelIds.push(name)
+    } else {
+      checkedChannelIds.splice(checkedChannelIds.indexOf(name), 1)
     }
-    
-    const handleOk = () => {
-        dispatch({type: Actions.SET_SUBSCRIPTIONS, payload: checkedChannelIds})
-    }
+  }
 
-    return (
-    <Dialog 
-        aria-labelledby="subs" 
+  const handleOk = () => {
+    dispatch({ type: Actions.SET_SUBSCRIPTIONS, payload: checkedChannelIds })
+  }
+
+  return (
+    <Dialog
+        aria-labelledby="subs"
         open={isOpen}
-        maxWidth={"xs"}
+        maxWidth={'xs'}
         >
         <DialogTitle id="subs">チャンネルを選択してください</DialogTitle>
         <DialogContent>
@@ -67,7 +66,7 @@ const SubscroptionSelectDialog = () => {
                     </Avatar>
                 </ListItemAvatar>
                 <ListItemText primary={subs.channelTitle} secondary={subs.description} />
-                <Checkbox 
+                <Checkbox
                     name={subs.resourceId.channelId}
                     className={stlye.checkbox}
                     onChange={handleChange}
@@ -81,7 +80,7 @@ const SubscroptionSelectDialog = () => {
           </Button>
         </DialogActions>
     </Dialog>
-    )
+  )
 }
 
 export default SubscroptionSelectDialog
