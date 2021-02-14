@@ -43,7 +43,6 @@ export default class YoutubeApi {
 
       allResult = [...allResult, ...distinctItems]
     }
-    console.log('allResult', allResult)
     return allResult
   }
 

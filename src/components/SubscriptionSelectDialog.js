@@ -47,39 +47,39 @@ const SubscroptionSelectDialog = () => {
   const handleOk = () => {
     dispatch({ type: Actions.SET_SUBSCRIPTIONS, payload: checkedChannelIds })
   }
-  console.log(state.potentialSubscriptions)
 
   return (
     <Dialog
-        aria-labelledby="subs"
-        open={isOpen}
-        maxWidth={'xs'}
-        >
-        <DialogTitle id="subs">チャンネルを選択してください</DialogTitle>
-        <DialogContent>
-            <DialogContentText>ここで選んだチャンネルの配信予定をタイムライン表示します。</DialogContentText>
-        </DialogContent>
+      aria-labelledby="subs"
+      open={isOpen}
+      maxWidth={'xs'}
+      scroll="paper"
+      >
+      <DialogTitle id="subs">チャンネルを選択してください</DialogTitle>
+      <DialogContent>
+        <DialogContentText>ここで選んだチャンネルの配信予定をタイムライン表示します。</DialogContentText>
         <List>
         {state.potentialSubscriptions.map((subs) => (
-            <ListItem key={subs.resourceId.channelId}>
-                <ListItemAvatar>
-                    <Avatar src={subs.thumbnails.medium.url}>
-                    </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary={subs.title} />
-                <Checkbox
-                    name={subs.resourceId.channelId}
-                    className={stlye.checkbox}
-                    onChange={handleChange}
-                ></Checkbox>
-            </ListItem>
+          <ListItem key={subs.resourceId.channelId}>
+            <ListItemAvatar>
+                <Avatar src={subs.thumbnails.medium.url}>
+                </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={subs.title} />
+            <Checkbox
+                name={subs.resourceId.channelId}
+                className={stlye.checkbox}
+                onChange={handleChange}
+            ></Checkbox>
+          </ListItem>
         ))}
         </List>
-        <DialogActions>
-          <Button onClick={handleOk} color="primary">
-            OK
-          </Button>
-        </DialogActions>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleOk} color="primary">
+          OK
+        </Button>
+      </DialogActions>
     </Dialog>
   )
 }

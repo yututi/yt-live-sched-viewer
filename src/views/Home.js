@@ -6,18 +6,22 @@ import { store, Actions } from '../stores/Youtube'
 import React, { useContext, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import Auth from 'oauth2-implicitgrant'
-import YoutubeApi from '../Youtube'
+import YoutubeApi from '../Youtube.mock'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import Fade from '@material-ui/core/Fade'
 
 const useStyles = makeStyles(() => ({
   root: {
     flexGrow: 1,
     maxWidth: '1200px',
     margin: 'auto'
+  },
+  progress: {
+    marginTop: '20px'
   }
 }))
 const Home = ({ auth }) => {
   const classes = useStyles()
-  console.log('home rerender')
 
   const { state, dispatch } = useContext(store)
 
@@ -39,8 +43,11 @@ const Home = ({ auth }) => {
 
   return (
     <div className={classes.root}>
-        {state.canFetchLives ? (<TimeLine></TimeLine>) : ''}
-        <SubscriptionSelectDialog></SubscriptionSelectDialog>
+      <Fade in={state.isFetching} unmountOnExit>
+          <CircularProgress className={classes.progress}></CircularProgress>
+      </Fade>
+      {state.canFetchLives ? (<TimeLine></TimeLine>) : ''}
+      <SubscriptionSelectDialog></SubscriptionSelectDialog>
     </div>
   )
 }

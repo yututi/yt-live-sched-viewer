@@ -37,9 +37,7 @@ const store = createContext({
 const { Provider } = store
 
 const YoutubeStateProvider = ({ children }) => {
-  console.log('provider init')
   const [state, dispatch] = useReducer((state, action) => {
-    console.log(action, state)
     switch (action.type) {
       case Actions.INIT:
         return { ...state, api: action.payload }
@@ -79,7 +77,6 @@ const YoutubeStateProvider = ({ children }) => {
         Promise.all(state.subscriptions.map(async id =>
           state.api.fetchUpcomingLivesByChannelId(id)
         )).then(result => {
-          console.log(result)
           const all = result.reduce((acc, cur) => [...acc, ...cur], []).map(obj => obj.snippet)
           dispatch({ type: Actions.SET_UPCOMING_LIVES, payload: all })
         })

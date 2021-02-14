@@ -58,50 +58,77 @@ export default class YoutubeApi {
   async fetchUpcomingLivesByChannelId (channelId) {
     return new Promise(resolve => {
       setTimeout(() => {
-        resolve([
-          {
-            snippet: {
-              publishedAt: '2021-03-01T19:00:00',
-              title: 'sample video',
-              description: 'this is sample video',
-              thumbnails: {
-                medium: {
-                  url: 'https://yt3.ggpht.com/ytc/AAUvwniAjGmotDDxZK7psIMoRbqhY7Ici621OQrO7fB9Wg=s48-c-k-c0x00ffffff-no-rj'
+        resolve({
+          items: [
+            {
+              id: { videoId: 'test1' },
+              snippet: {
+                publishedAt: '2021-03-01T19:00:00',
+                title: 'sample video',
+                description: 'this is sample video',
+                thumbnails: {
+                  medium: {
+                    url: 'https://yt3.ggpht.com/ytc/AAUvwniAjGmotDDxZK7psIMoRbqhY7Ici621OQrO7fB9Wg=s48-c-k-c0x00ffffff-no-rj'
+                  }
+                }
+              }
+            },
+            {
+              id: { videoId: 'test2' },
+              snippet: {
+                publishedAt: '2021-03-01T19:00:00',
+                title: 'sample video',
+                description: 'this is sample video',
+                thumbnails: {
+                  medium: {
+                    url: 'https://yt3.ggpht.com/ytc/AAUvwniAjGmotDDxZK7psIMoRbqhY7Ici621OQrO7fB9Wg=s48-c-k-c0x00ffffff-no-rj'
+                  }
+                }
+              }
+            },
+            {
+              id: { videoId: 'test3' },
+              snippet: {
+                publishedAt: '2021-03-02T19:00:00',
+                title: 'sample video',
+                description: 'this is sample video',
+                thumbnails: {
+                  medium: {
+                    url: 'https://yt3.ggpht.com/ytc/AAUvwniAjGmotDDxZK7psIMoRbqhY7Ici621OQrO7fB9Wg=s48-c-k-c0x00ffffff-no-rj'
+                  }
                 }
               }
             }
-          },
-          {
-            snippet: {
-              publishedAt: '2021-03-01T19:00:00',
-              title: 'sample video',
-              description: 'this is sample video',
-              thumbnails: {
-                medium: {
-                  url: 'https://yt3.ggpht.com/ytc/AAUvwniAjGmotDDxZK7psIMoRbqhY7Ici621OQrO7fB9Wg=s48-c-k-c0x00ffffff-no-rj'
-                }
-              }
-            }
-          },
-          {
-            snippet: {
-              publishedAt: '2021-03-02T19:00:00',
-              title: 'sample video',
-              description: 'this is sample video',
-              thumbnails: {
-                medium: {
-                  url: 'https://yt3.ggpht.com/ytc/AAUvwniAjGmotDDxZK7psIMoRbqhY7Ici621OQrO7fB9Wg=s48-c-k-c0x00ffffff-no-rj'
-                }
-              }
-            }
-          }
-        ])
+          ]
+        })
       }, 3000)
     })
   }
 
   async fetchActiveLivesByChannelId (channelId) {
     return this.fetchUpcomingLivesByChannelId()
+  }
+
+  async fetchLiveDetailsByVideoIds (videoIds) {
+    return {
+      items: [
+        {
+          liveStreamingDetails: {
+            scheduledStartTime: '2021-03-01T05:10:00'
+          },
+          snippet: {
+            publishedAt: '2021-03-02T19:00:00',
+            title: 'sample video',
+            description: 'this is sample video',
+            thumbnails: {
+              high: {
+                url: 'https://yt3.ggpht.com/ytc/AAUvwniAjGmotDDxZK7psIMoRbqhY7Ici621OQrO7fB9Wg=s48-c-k-c0x00ffffff-no-rj'
+              }
+            }
+          }
+        }
+      ]
+    }
   }
 
   async _fetch (url, params) {

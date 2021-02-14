@@ -23,7 +23,6 @@ const { Provider } = store
 
 const AuthStateProvider = ({ children }) => {
   const [state, dispatch] = useReducer((state, action) => {
-    console.log('auth', action)
     switch (action.type) {
       case Actions.INIT:
         const auth = Auth.forGoogleApi({

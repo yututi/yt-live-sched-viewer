@@ -41,17 +41,12 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     paddingLeft: theme.spacing(1),
     paddingBottom: theme.spacing(1)
-  },
-  playIcon: {
-    height: 38,
-    width: 38
   }
 }))
 
 export default function YoutubeLiveCard ({ live }) {
   const classes = useStyles()
 
-  console.log(live)
   const openChannel = () => {
     window.open(`https://www.youtube.com/channel/${live.snippet.channelId}`)
   }
@@ -65,8 +60,8 @@ export default function YoutubeLiveCard ({ live }) {
               </Typography>
             </CardContent>
             <div className={classes.controls}>
-              <IconButton size={'small'} onClick={openChannel}>
-                  <OpenInNewIcon fontSize="small" className={classes.playIcon} />
+              <IconButton onClick={openChannel}>
+                  <OpenInNewIcon />
               </IconButton>
             </div>
         </div>

@@ -10,8 +10,6 @@ import TimelineDot from '@material-ui/lab/TimelineDot'
 import Typography from '@material-ui/core/Typography'
 import { store, Actions } from '../stores/Youtube'
 import YoutubeLiveCard from './YoutubeLiveCard'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import Fade from '@material-ui/core/Fade'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -23,9 +21,6 @@ const useStyles = makeStyles((theme) => ({
   cards: {
     flexDirection: 'column',
     display: 'flex'
-  },
-  progress: {
-    marginTop: '20px'
   },
   oppsite: {
     minWidth: '200px',
@@ -66,6 +61,8 @@ export default function UpcomingVideoTimeline () {
       })
     }
   }, [])
+
+  // FIXME これはreducerでやるべき
   // group by scheduled start datetime.
   const group = state.upcomminglives.reduce((acc, cur) => {
     const key = cur.liveStreamingDetails.scheduledStartTime
@@ -77,7 +74,6 @@ export default function UpcomingVideoTimeline () {
     }
     return acc
   }, {})
-
   const livesGroupedByPublishAt = Object.entries(group).map(([key, value]) => {
     return {
       scheduledStartTime: new Date(key),
@@ -85,11 +81,10 @@ export default function UpcomingVideoTimeline () {
     }
   }).sort((a, b) => a.scheduledStartTime - b.scheduledStartTime)
 
+  const currentDatetime = Date.now()
+
   return (
     <>
-    <Fade in={state.isFetching}>
-        <CircularProgress className={classes.progress}></CircularProgress>
-    </Fade>
     <Timeline align="left">
         {livesGroupedByPublishAt.map(({ scheduledStartTime, lives }) => {
           return (
@@ -100,7 +95,7 @@ export default function UpcomingVideoTimeline () {
                     </Typography>
                 </TimelineOppositeContent>
                 <TimelineSeparator>
-                    <TimelineDot/>
+                    <TimelineDot color={currentDatetime < scheduledStartTime ? 'primary' : 'inherit'}/>
                     <TimelineConnector />
                 </TimelineSeparator>
                 <TimelineContent className={classes.cards}>
