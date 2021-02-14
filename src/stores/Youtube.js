@@ -1,5 +1,6 @@
 import React, { createContext, useReducer } from 'react'
 import PropTypes from 'prop-types'
+import YoutubeApi from '../Youtube'
 
 const initialState = {
   isFetching: false,
@@ -12,7 +13,8 @@ const initialState = {
      * @type{YoutubeApi}
      */
   api: null,
-  lastFetched: null
+  lastFetched: null,
+  isQuotaExceeded: false
 }
 
 const Actions = {
@@ -26,7 +28,8 @@ const Actions = {
   REQUEST_UPCOMING_LIVES: 'REQUEST_UPCOMING_LIVES',
   REQUEST_ACTIVE_LIVES: 'REQUEST_ACTIVE_LIVES',
   FETCH_START: 'FETCH_START',
-  FETCH_END: 'FETCH_END'
+  FETCH_END: 'FETCH_END',
+  QUOTA_EXCEEDED: 'QUOTA_EXCEEDED'
 }
 
 const store = createContext({
@@ -82,12 +85,64 @@ const YoutubeStateProvider = ({ children }) => {
         })
         return { ...state, isFetching: true, lastFetched: new Date() }
 
+      case Actions.QUOTA_EXCEEDED:
+        return { ...state, isQuotaExceeded: true, isFetching: false }
+
       default:
         throw new Error(`Unexpeceted action: ${action.type}`)
     }
   }, initialState)
 
-  return <Provider value={{ state, dispatch }}>{children}</Provider>
+  const actions = {
+    init: (auth) => {
+      const api = new YoutubeApi(auth)
+      dispatch({ type: Actions.INIT, payload: api })
+      const localSubscriptions = JSON.parse(localStorage.getItem('subscriptions'))
+      if (localSubscriptions) {
+        dispatch({ type: Actions.SET_SUBSCRIPTIONS, payload: localSubscriptions })
+      } else {
+        dispatch({ type: Actions.FETCH_START })
+        api.fetchMySubscriptionChannelIds().then(result => {
+          if (result.error) {
+            dispatch({ type: Actions.QUOTA_EXCEEDED })
+            return
+          }
+          dispatch({ type: Actions.SET_POTENTIAL_SUBSCRIPTIONS, payload: result.map(item => item.snippet) })
+        })
+      }
+    },
+    fetchUpcomingLives: () => {
+      if (state.lastFetched) {
+        const throttleDate = new Date()
+        throttleDate.setMinutes(throttleDate.getMinutes() - 3)
+        if (state.lastFetched >= throttleDate) {
+          return state
+        }
+      }
+      dispatch({ type: Actions.FETCH_START })
+      Promise.all(state.subscriptions.map(async id =>
+        state.api.fetchUpcomingLivesByChannelId(id)
+      )).then(async result => {
+        if (result.error) {
+          dispatch({ type: Actions.QUOTA_EXCEEDED })
+          return
+        }
+
+        const all = result.reduce((acc, cur) => [...acc, ...cur.items], [])
+
+        const videoIds = all.reduce((acc, cur) => {
+          acc.push(cur.id.videoId)
+          return acc
+        }, [])
+
+        const detailResult = await state.api.fetchLiveDetailsByVideoIds(videoIds)
+
+        dispatch({ type: Actions.SET_UPCOMING_LIVES, payload: detailResult.items })
+      })
+    }
+  }
+
+  return <Provider value={{ state, dispatch, actions }}>{children}</Provider>
 }
 
 YoutubeStateProvider.propTypes = {

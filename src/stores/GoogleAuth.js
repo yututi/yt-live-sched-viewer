@@ -25,22 +25,7 @@ const AuthStateProvider = ({ children }) => {
   const [state, dispatch] = useReducer((state, action) => {
     switch (action.type) {
       case Actions.INIT:
-        const auth = Auth.forGoogleApi({
-          clientId: process.env.REACT_APP_GOOGLE_API_CLIENT_ID,
-          redirectUrl: process.env.REACT_APP_GOOGLE_API_REDIRECT_URL,
-          scope: ['https://www.googleapis.com/auth/youtube.readonly']
-        })
-        auth.init({
-          onLogin: () => {
-            // dispatch("SET_IS_LOGGED_IN", true)
-          },
-          onDenied: () => {
-            // dispatch("SET_IS_LOGGED_IN", false)
-          }
-        }).then(isLoggedIn => {
-          dispatch({ type: 'SET_IS_LOGGED_IN', payload: isLoggedIn })
-        })
-        return { ...state, api: auth }
+        return { ...state, api: action.payload }
 
       case Actions.SET_IS_LOGGED_IN:
         return { ...state, isLoggedIn: action.payload, isInitialized: true }
@@ -54,8 +39,21 @@ const AuthStateProvider = ({ children }) => {
   }, initialState)
 
   useEffect(() => {
-    dispatch({ type: Actions.INIT })
+    const auth = Auth.forGoogleApi({
+      clientId: process.env.REACT_APP_GOOGLE_API_CLIENT_ID,
+      redirectUrl: process.env.REACT_APP_GOOGLE_API_REDIRECT_URL,
+      scope: ['https://www.googleapis.com/auth/youtube.readonly']
+    })
+    auth.init({
+      onDenied: () => {
+        // dispatch({ type: Actions.LOGOUT })
+      }
+    }).then(isLoggedIn => {
+      dispatch({ type: 'SET_IS_LOGGED_IN', payload: isLoggedIn })
+    })
+    dispatch({ type: Actions.INIT, payload: auth })
   }, [])
+
   return <Provider value={{ state, dispatch }}>{children}</Provider>
 }
 

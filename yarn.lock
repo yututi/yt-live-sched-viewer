@@ -7999,10 +7999,10 @@
   "resolved" "https://registry.yarnpkg.com/oauth-sign/-/oauth-sign-0.9.0.tgz"
   "version" "0.9.0"
 
-"oauth2-implicitgrant@^1.0.1":
-  "integrity" "sha512-HBE77ARD2jjzQlsv3vuJUsFmcmEx469MXVG52x3c0jHtnWAsq72RaXntNkiPDtgRIOMxblEWpOWNB+yvV8Z43w=="
-  "resolved" "https://registry.npmjs.org/oauth2-implicitgrant/-/oauth2-implicitgrant-1.0.1.tgz"
-  "version" "1.0.1"
+"oauth2-implicitgrant@^1.0.3":
+  "integrity" "sha512-hLYQtLzH2ap8+75DivM2yEU49llMUa0Wna2gFKHgkqmJjhH/lNBmnX5tCqCwpcxbdyZRSk05exIVbi7eHKH7ow=="
+  "resolved" "https://registry.npmjs.org/oauth2-implicitgrant/-/oauth2-implicitgrant-1.0.3.tgz"
+  "version" "1.0.3"
 
 "object-assign@^4.0.1", "object-assign@^4.1.0", "object-assign@^4.1.1":
   "integrity" "sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM="

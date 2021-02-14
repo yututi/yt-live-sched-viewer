@@ -9,7 +9,7 @@ import { YoutubeStateProvider } from './stores/Youtube'
 ReactDOM.render(
   <AuthStateProvider>
     <YoutubeStateProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={process.env.PUBLIC_URL}>
           <App />
       </BrowserRouter>
     </YoutubeStateProvider>

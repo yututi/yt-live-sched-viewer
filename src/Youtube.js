@@ -16,6 +16,8 @@ export default class YoutubeApi {
       maxResults: 50
     })
 
+    if (result.error) return result
+
     // nextPageTokenでとってくる場合、もう取得した奴も混ざってる？ぽいので重複排除する。
     const added = {}
     result.items.forEach(item => {
@@ -33,6 +35,7 @@ export default class YoutubeApi {
         pageToken: result.nextPageToken
       })
 
+      if (result.error) return result
       const distinctItems = result.items.filter(item => {
         return !added[item.snippet.resourceId.channelId]
       })

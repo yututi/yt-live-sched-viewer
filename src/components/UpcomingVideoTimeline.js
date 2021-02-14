@@ -8,7 +8,7 @@ import TimelineContent from '@material-ui/lab/TimelineContent'
 import TimelineOppositeContent from '@material-ui/lab/TimelineOppositeContent'
 import TimelineDot from '@material-ui/lab/TimelineDot'
 import Typography from '@material-ui/core/Typography'
-import { store, Actions } from '../stores/Youtube'
+import { store } from '../stores/Youtube'
 import YoutubeLiveCard from './YoutubeLiveCard'
 
 const useStyles = makeStyles((theme) => ({
@@ -30,35 +30,36 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UpcomingVideoTimeline () {
   const classes = useStyles()
-  const { state, dispatch } = useContext(store)
+  const { state, actions } = useContext(store)
 
   useEffect(() => {
     if (state.upcomminglives.length === 0) {
       // FIXME: ロジックをreducerへ移したいが、dispatchを呼び出すとreducerの処理が2回呼ばれる挙動になるため、
       // fetchが2回動いてしまう.
       // 原因がわからないのでここで呼び出す。ここから呼び出すdispatchも2回呼び出されるがfetchは1回なので...
-      if (state.lastFetched) {
-        const throttleDate = new Date()
-        throttleDate.setMinutes(throttleDate.getMinutes() - 3)
-        if (state.lastFetched >= throttleDate) {
-          return state
-        }
-      }
-      dispatch({ type: Actions.FETCH_START })
-      Promise.all(state.subscriptions.map(async id =>
-        state.api.fetchUpcomingLivesByChannelId(id)
-      )).then(async result => {
-        const all = result.reduce((acc, cur) => [...acc, ...cur.items], [])
+      // if (state.lastFetched) {
+      //   const throttleDate = new Date()
+      //   throttleDate.setMinutes(throttleDate.getMinutes() - 3)
+      //   if (state.lastFetched >= throttleDate) {
+      //     return state
+      //   }
+      // }
+      // dispatch({ type: Actions.FETCH_START })
+      // Promise.all(state.subscriptions.map(async id =>
+      //   state.api.fetchUpcomingLivesByChannelId(id)
+      // )).then(async result => {
+      //   const all = result.reduce((acc, cur) => [...acc, ...cur.items], [])
 
-        const videoIds = all.reduce((acc, cur) => {
-          acc.push(cur.id.videoId)
-          return acc
-        }, [])
+      //   const videoIds = all.reduce((acc, cur) => {
+      //     acc.push(cur.id.videoId)
+      //     return acc
+      //   }, [])
 
-        const detailResult = await state.api.fetchLiveDetailsByVideoIds(videoIds)
+      //   const detailResult = await state.api.fetchLiveDetailsByVideoIds(videoIds)
 
-        dispatch({ type: Actions.SET_UPCOMING_LIVES, payload: detailResult.items })
-      })
+      //   dispatch({ type: Actions.SET_UPCOMING_LIVES, payload: detailResult.items })
+      // })
+      actions.fetchUpcomingLives()
     }
   }, [])
 
