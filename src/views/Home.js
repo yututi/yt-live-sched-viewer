@@ -38,10 +38,10 @@ const Home = ({ auth }) => {
   }, [])
 
   return (
-        <div className={classes.root}>
-            {state.canFetchLives ? (<TimeLine></TimeLine>) : ''}
-            <SubscriptionSelectDialog></SubscriptionSelectDialog>
-        </div>
+    <div className={classes.root}>
+        {state.canFetchLives ? (<TimeLine></TimeLine>) : ''}
+        <SubscriptionSelectDialog></SubscriptionSelectDialog>
+    </div>
   )
 }
 

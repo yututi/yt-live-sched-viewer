@@ -67,6 +67,8 @@ const YoutubeStateProvider = ({ children }) => {
         return { ...state, potentialSubscriptions: action.payload, isFetching: false }
 
       case Actions.REQUEST_UPCOMING_LIVES:
+        // deprecated: dispatch1回でreducerの処理が2回呼ばれるため、
+        // このアクションを実行するとfetchが2回実行される.
         if (state.lastFetched) {
           const throttleDate = new Date()
           throttleDate.setMinutes(throttleDate.getMinutes() - 3)

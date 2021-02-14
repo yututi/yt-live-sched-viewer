@@ -7,14 +7,14 @@ import { AuthStateProvider } from './stores/GoogleAuth'
 import { YoutubeStateProvider } from './stores/Youtube'
 
 ReactDOM.render(
-    <AuthStateProvider>
-      <YoutubeStateProvider>
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>
-      </YoutubeStateProvider>
-    </AuthStateProvider>,
-    document.getElementById('root')
+  <AuthStateProvider>
+    <YoutubeStateProvider>
+      <BrowserRouter>
+          <App />
+      </BrowserRouter>
+    </YoutubeStateProvider>
+  </AuthStateProvider>,
+  document.getElementById('root')
 )
 
 // If you want to start measuring performance in your app, pass a function

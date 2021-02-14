@@ -39,8 +39,9 @@ export default function UpcomingVideoTimeline () {
 
   useEffect(() => {
     if (state.upcomminglives.length === 0) {
-      // FIXME: ロジックをreducerへ移したいが、dispatchを呼び出すとreducerの処理が2回呼ばれる挙動になる.
-      // 原因がわからないのでここで呼び出す。ここのdispatchも2回呼び出されるがfetchは1回なので...
+      // FIXME: ロジックをreducerへ移したいが、dispatchを呼び出すとreducerの処理が2回呼ばれる挙動になるため、
+      // fetchが2回動いてしまう.
+      // 原因がわからないのでここで呼び出す。ここから呼び出すdispatchも2回呼び出されるがfetchは1回なので...
       if (state.lastFetched) {
         const throttleDate = new Date()
         throttleDate.setMinutes(throttleDate.getMinutes() - 3)
@@ -85,33 +86,32 @@ export default function UpcomingVideoTimeline () {
   }).sort((a, b) => a.scheduledStartTime - b.scheduledStartTime)
 
   return (
-        <>
-        <Fade in={state.isFetching}>
-            <CircularProgress className={classes.progress}></CircularProgress>
-        </Fade>
-        <Timeline align="left">
-            {livesGroupedByPublishAt.map(({ scheduledStartTime, lives }) => {
-              return (
-                <TimelineItem key={scheduledStartTime}>
-                    <TimelineOppositeContent className={classes.oppsite}>
-                        <Typography variant="body2" color="textSecondary">
-                        {scheduledStartTime.toLocaleString()}
-                        </Typography>
-                    </TimelineOppositeContent>
-                    <TimelineSeparator>
-                        <TimelineDot>
-                        </TimelineDot>
-                        <TimelineConnector />
-                    </TimelineSeparator>
-                    <TimelineContent className={classes.cards}>
-                        {lives.map((live, index) => (
-                            <YoutubeLiveCard key={index} live={live}></YoutubeLiveCard>
-                        ))}
-                    </TimelineContent>
-                </TimelineItem>
-              )
-            })}
-        </Timeline>
-        </>
+    <>
+    <Fade in={state.isFetching}>
+        <CircularProgress className={classes.progress}></CircularProgress>
+    </Fade>
+    <Timeline align="left">
+        {livesGroupedByPublishAt.map(({ scheduledStartTime, lives }) => {
+          return (
+            <TimelineItem key={scheduledStartTime}>
+                <TimelineOppositeContent className={classes.oppsite}>
+                    <Typography variant="body2" color="textSecondary">
+                    {scheduledStartTime.toLocaleString()}
+                    </Typography>
+                </TimelineOppositeContent>
+                <TimelineSeparator>
+                    <TimelineDot/>
+                    <TimelineConnector />
+                </TimelineSeparator>
+                <TimelineContent className={classes.cards}>
+                    {lives.map((live, index) => (
+                        <YoutubeLiveCard key={index} live={live}></YoutubeLiveCard>
+                    ))}
+                </TimelineContent>
+            </TimelineItem>
+          )
+        })}
+    </Timeline>
+    </>
   )
 }

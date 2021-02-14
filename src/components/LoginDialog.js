@@ -11,14 +11,14 @@ const LoginDialog = ({ requireLogin, auth }) => {
   }
 
   return (
-      <Dialog open={requireLogin} aria-labelledby="login-form">
-      <DialogTitle id="login-form">ログインしてください</DialogTitle>
-        <DialogActions>
-          <Button onClick={handleLogin} color="primary">
-            Login
-          </Button>
-        </DialogActions>
-      </Dialog>
+    <Dialog open={requireLogin} aria-labelledby="login-form">
+    <DialogTitle id="login-form">ログインしてください</DialogTitle>
+      <DialogActions>
+        <Button onClick={handleLogin} color="primary">
+          Login
+        </Button>
+      </DialogActions>
+    </Dialog>
   )
 }
 

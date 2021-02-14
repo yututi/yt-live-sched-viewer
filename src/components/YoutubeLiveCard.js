@@ -57,25 +57,25 @@ export default function YoutubeLiveCard ({ live }) {
   }
 
   return (
-        <Card className={classes.root}>
-            <div className={classes.details}>
-                <CardContent className={classes.content}>
-                  <Typography className={classes.text} component="h6" variant="h6">
-                      {live.snippet.title}
-                  </Typography>
-                </CardContent>
-                <div className={classes.controls}>
-                  <IconButton size={'small'} onClick={openChannel}>
-                      <OpenInNewIcon fontSize="small" className={classes.playIcon} />
-                  </IconButton>
-                </div>
+    <Card className={classes.root}>
+        <div className={classes.details}>
+            <CardContent className={classes.content}>
+              <Typography className={classes.text} component="h6" variant="h6">
+                  {live.snippet.title}
+              </Typography>
+            </CardContent>
+            <div className={classes.controls}>
+              <IconButton size={'small'} onClick={openChannel}>
+                  <OpenInNewIcon fontSize="small" className={classes.playIcon} />
+              </IconButton>
             </div>
-            <CardMedia
-                className={classes.cover}
-                image={live.snippet.thumbnails.high.url}
-                title={live.snippet.title}
-            />
-        </Card>
+        </div>
+        <CardMedia
+            className={classes.cover}
+            image={live.snippet.thumbnails.high.url}
+            title={live.snippet.title}
+        />
+    </Card>
   )
 }
 
