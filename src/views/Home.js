@@ -34,20 +34,7 @@ const Home = ({ auth }) => {
   const { state, actions } = useContext(store)
 
   useEffect(() => {
-    // FIXME: ロジックをreducerへ移したいが、dispatchを呼び出すとreducerの処理が2回呼ばれる挙動になる.
-    // 原因がわからないのでここで呼び出す。ここのdispatchも2回呼び出されるがfetchは1回なので...
     actions.init(auth)
-    // const api = new YoutubeApi(auth)
-    // dispatch({ type: Actions.INIT, payload: api })
-    // const localSubscriptions = JSON.parse(localStorage.getItem('subscriptions'))
-    // if (localSubscriptions) {
-    //   dispatch({ type: Actions.SET_SUBSCRIPTIONS, payload: localSubscriptions })
-    // } else {
-    //   dispatch({ type: Actions.FETCH_START })
-    //   api.fetchMySubscriptionChannelIds().then(result => {
-    //     dispatch({ type: Actions.SET_POTENTIAL_SUBSCRIPTIONS, payload: result.map(item => item.snippet) })
-    //   })
-    // }
   }, [])
 
   return (
